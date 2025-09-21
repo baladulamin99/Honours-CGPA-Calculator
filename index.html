@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CGPA Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+        }
+        .social-button {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            color: white;
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .social-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .social-button.facebook {
+            background-color: #3b5998;
+        }
+        .social-button.instagram {
+            background-color: #E1306C;
+        }
+        .social-button.linkedin {
+            background-color: #0077b5;
+        }
+        .social-button.youtube {
+            background-color: #ff0000;
+        }
+        .follow-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+    </style>
+</head>
+<body class="flex items-center justify-center min-h-screen p-4">
+    <div class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-lg">
+        <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">CGPA Calculator</h1>
+        <p class="text-gray-600 mb-6 text-center">আপনার প্রয়োজন অনুযায়ী বিষয় যোগ করুন এবং আপনার CGPA গণনা করুন।</p>
+        
+        <div id="grades-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+            <!-- Initial grade selection box -->
+            <div class="flex flex-col">
+                <label for="gradeSelect-1" class="text-gray-700 font-medium mb-1">বিষয় 1:</label>
+                <select id="gradeSelect-1" class="grade-select w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200">
+                    <option value="">- প্রাপ্ত গ্রেড নির্বাচন করুন -</option>
+                    <option value="4">A+</option>
+                    <option value="3.75">A</option>
+                    <option value="3.50">A-</option>
+                    <option value="3.25">B+</option>
+                    <option value="3">B</option>
+                    <option value="2.75">B-</option>
+                    <option value="2.50">C+</option>
+                    <option value="2.25">C</option>
+                    <option value="2">D</option>
+                    <option value="0">F</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="flex justify-center mb-4">
+            <button id="addSubjectButton" class="bg-gray-200 text-gray-800 font-bold py-2 px-6 rounded-lg shadow-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 transition duration-200">
+                বিষয় যোগ করুন
+            </button>
+        </div>
+
+        <div class="flex justify-center mb-6">
+            <button id="calculateButton" class="bg-blue-600 text-white font-bold py-2 px-6 rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200">
+                CGPA গণনা করুন
+            </button>
+        </div>
+        
+        <p class="credit text-center text-gray-500 mb-4 font-bold">Follow Me</p>
+    
+        <div class="follow-buttons">
+            <!-- Facebook button with Font Awesome icon -->
+            <a href="https://www.facebook.com/baladulamin99" target="_blank" rel="noopener noreferrer" class="social-button facebook">
+                <i class="fab fa-facebook-f"></i>
+            </a>
+            <!-- Instagram button with Font Awesome icon -->
+            <a href="https://www.instagram.com/baladulamin99/?hl=en" target="_blank" rel="noopener noreferrer" class="social-button instagram">
+                <i class="fab fa-instagram"></i>
+            </a>
+            <!-- LinkedIn button with Font Awesome icon -->
+            <a href="https://www.linkedin.com/in/baladulamin99/" target="_blank" rel="noopener noreferrer" class="social-button linkedin">
+                <i class="fab fa-linkedin-in"></i>
+            </a>
+            <!-- YouTube button with Font Awesome icon -->
+            <a href="https://www.youtube.com/@baladulamin99" target="_blank" rel="noopener noreferrer" class="social-button youtube">
+                <i class="fab fa-youtube"></i>
+            </a>
+        </div>
+
+        <div id="resultBox" class="bg-blue-50 p-6 rounded-lg shadow-inner border border-blue-200 text-center transition-all duration-300 transform scale-y-0 opacity-0 origin-top mt-6">
+            <p class="text-blue-700 mb-2">আপনার CGPA হল:</p>
+            <p id="cgpaResult" class="text-5xl font-extrabold text-blue-800"></p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const gradePoints = {
+                "A+": 4.0, "A": 3.75, "A-": 3.50, "B+": 3.25,
+                "B": 3.0, "B-": 2.75, "C+": 2.50, "C": 2.25,
+                "D": 2.0, "F": 0.0
+            };
+            const container = document.getElementById('grades-container');
+            let subjectCount = 1;
+            
+            // Function to create a single grade selection box
+            const createGradeSelect = (subjectNumber) => {
+                const div = document.createElement('div');
+                div.className = "flex flex-col";
+                
+                const label = document.createElement('label');
+                label.htmlFor = `gradeSelect-${subjectNumber}`;
+                label.className = "text-gray-700 font-medium mb-1";
+                label.textContent = `বিষয় ${subjectNumber}:`;
+                
+                const select = document.createElement('select');
+                select.id = `gradeSelect-${subjectNumber}`;
+                select.className = "grade-select w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200";
+                
+                let defaultOption = document.createElement('option');
+                defaultOption.value = "";
+                defaultOption.textContent = "- প্রাপ্ত গ্রেড নির্বাচন করুন -";
+                select.appendChild(defaultOption);
+                
+                for (const [grade, point] of Object.entries(gradePoints)) {
+                    let option = document.createElement('option');
+                    option.value = point;
+                    option.textContent = grade;
+                    select.appendChild(option);
+                }
+                
+                div.appendChild(label);
+                div.appendChild(select);
+                
+                return div;
+            };
+
+            document.getElementById('addSubjectButton').addEventListener('click', () => {
+                subjectCount++;
+                container.appendChild(createGradeSelect(subjectCount));
+            });
+
+            document.getElementById('calculateButton').addEventListener('click', () => {
+                const gradeSelects = document.querySelectorAll('.grade-select');
+                const cgpaResult = document.getElementById('cgpaResult');
+                const resultBox = document.getElementById('resultBox');
+
+                let totalGradePoint = 0;
+                let validSelections = true;
+
+                // Loop through all selection boxes to calculate total grade points
+                gradeSelects.forEach(select => {
+                    const gradePoint = parseFloat(select.value);
+                    if (isNaN(gradePoint)) {
+                        validSelections = false;
+                    }
+                    totalGradePoint += gradePoint;
+                });
+                
+                const numberOfSubjects = gradeSelects.length;
+
+                if (validSelections && numberOfSubjects > 0) {
+                    const cgpa = (totalGradePoint / numberOfSubjects).toFixed(2);
+                    cgpaResult.textContent = cgpa;
+                    resultBox.classList.remove('scale-y-0', 'opacity-0');
+                    resultBox.classList.add('scale-y-100', 'opacity-100');
+                    cgpaResult.style.color = "#1D4ED8"; // Blue color for valid CGPA
+                } else {
+                    cgpaResult.textContent = "সব গ্রেড নির্বাচন করুন";
+                    resultBox.classList.remove('scale-y-0', 'opacity-0');
+                    resultBox.classList.add('scale-y-100', 'opacity-100');
+                    cgpaResult.style.color = "#DC2626"; // Red color for error message
+                }
+            });
+        });
+    </script>
+</body>
+</html>
