@@ -48,14 +48,14 @@
 </head>
 <body class="flex items-center justify-center min-h-screen p-4">
     <div class="bg-white p-8 rounded-xl shadow-2xl w-full max-w-lg">
-        <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">CGPA Calculator</h1>
-        <p class="text-gray-600 mb-6 text-center">আপনার প্রয়োজন অনুযায়ী বিষয় যোগ করুন এবং আপনার CGPA গণনা করুন।</p>
+        <h1 class="text-3xl font-bold mb-6 text-center" style="color: #33A02C;">CGPA Calculator</h1>
+        <p class="text-gray-600 mb-6 text-center font-bold">আপনার প্রয়োজন অনুযায়ী বিষয় যোগ করুন এবং আপনার CGPA গণনা করুন।</p>
         
         <div id="grades-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
             <!-- Initial grade selection box -->
             <div class="flex items-end space-x-2 subject-entry" id="subject-1">
                 <div class="flex-grow flex flex-col">
-                    <label for="gradeSelect-1" class="text-gray-700 font-medium mb-1">বিষয় 1:</label>
+                    <label for="gradeSelect-1" class="text-gray-700 font-medium mb-1">Subject 1:</label>
                     <select id="gradeSelect-1" class="grade-select w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200">
                         <option value="">- প্রাপ্ত গ্রেড নির্বাচন করুন -</option>
                         <option value="4">A+</option>
@@ -75,7 +75,7 @@
         
         <div class="flex justify-center mb-4">
             <button id="addSubjectButton" class="bg-gray-200 text-gray-800 font-bold py-2 px-6 rounded-lg shadow-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 transition duration-200">
-                বিষয় যোগ করুন
+                Add Subject
             </button>
         </div>
 
@@ -86,6 +86,7 @@
         </div>
         
         <p class="credit text-center text-gray-500 mb-4 font-bold">Follow Me</p>
+        <p class="text-center text-gray-500 text-sm mt-1">© Md. Baladul Amin</p>
     
         <div class="follow-buttons">
             <!-- Facebook button with Font Awesome icon -->
@@ -132,7 +133,7 @@
                     const deleteButton = entry.querySelector('.delete-button');
 
                     if (label) {
-                        label.textContent = `বিষয় ${subjectNumber}:`;
+                        label.textContent = `Subject ${subjectNumber}:`;
                     }
                     if (select) {
                         select.id = `gradeSelect-${subjectNumber}`;
@@ -156,7 +157,7 @@
                 const label = document.createElement('label');
                 label.htmlFor = `gradeSelect-${subjectNumber}`;
                 label.className = "text-gray-700 font-medium mb-1";
-                label.textContent = `বিষয় ${subjectNumber}:`;
+                label.textContent = `Subject ${subjectNumber}:`;
                 
                 const select = document.createElement('select');
                 select.id = `gradeSelect-${subjectNumber}`;
