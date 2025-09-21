@@ -53,21 +53,23 @@
         
         <div id="grades-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
             <!-- Initial grade selection box -->
-            <div class="flex flex-col">
-                <label for="gradeSelect-1" class="text-gray-700 font-medium mb-1">বিষয় 1:</label>
-                <select id="gradeSelect-1" class="grade-select w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200">
-                    <option value="">- প্রাপ্ত গ্রেড নির্বাচন করুন -</option>
-                    <option value="4">A+</option>
-                    <option value="3.75">A</option>
-                    <option value="3.50">A-</option>
-                    <option value="3.25">B+</option>
-                    <option value="3">B</option>
-                    <option value="2.75">B-</option>
-                    <option value="2.50">C+</option>
-                    <option value="2.25">C</option>
-                    <option value="2">D</option>
-                    <option value="0">F</option>
-                </select>
+            <div class="flex items-end space-x-2 subject-entry" id="subject-1">
+                <div class="flex-grow flex flex-col">
+                    <label for="gradeSelect-1" class="text-gray-700 font-medium mb-1">বিষয় 1:</label>
+                    <select id="gradeSelect-1" class="grade-select w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200">
+                        <option value="">- প্রাপ্ত গ্রেড নির্বাচন করুন -</option>
+                        <option value="4">A+</option>
+                        <option value="3.75">A</option>
+                        <option value="3.50">A-</option>
+                        <option value="3.25">B+</option>
+                        <option value="3">B</option>
+                        <option value="2.75">B-</option>
+                        <option value="2.50">C+</option>
+                        <option value="2.25">C</option>
+                        <option value="2">D</option>
+                        <option value="0">F</option>
+                    </select>
+                </div>
             </div>
         </div>
         
@@ -119,11 +121,37 @@
             };
             const container = document.getElementById('grades-container');
             let subjectCount = 1;
-            
-            // Function to create a single grade selection box
+
+            // Function to update subject numbers after deletion
+            const updateSubjectNumbers = () => {
+                const subjectEntries = document.querySelectorAll('.subject-entry');
+                subjectEntries.forEach((entry, index) => {
+                    const subjectNumber = index + 1;
+                    const label = entry.querySelector('label');
+                    const select = entry.querySelector('select');
+                    const deleteButton = entry.querySelector('.delete-button');
+
+                    if (label) {
+                        label.textContent = `বিষয় ${subjectNumber}:`;
+                    }
+                    if (select) {
+                        select.id = `gradeSelect-${subjectNumber}`;
+                    }
+                    if (deleteButton) {
+                        deleteButton.dataset.subjectId = subjectNumber;
+                    }
+                });
+                subjectCount = subjectEntries.length;
+            };
+
+            // Function to create a single grade selection box with delete button
             const createGradeSelect = (subjectNumber) => {
                 const div = document.createElement('div');
-                div.className = "flex flex-col";
+                div.className = "flex items-end space-x-2 subject-entry";
+                div.id = `subject-${subjectNumber}`;
+
+                const innerDiv = document.createElement('div');
+                innerDiv.className = "flex-grow flex flex-col";
                 
                 const label = document.createElement('label');
                 label.htmlFor = `gradeSelect-${subjectNumber}`;
@@ -146,8 +174,29 @@
                     select.appendChild(option);
                 }
                 
-                div.appendChild(label);
-                div.appendChild(select);
+                const deleteButton = document.createElement('button');
+                deleteButton.className = "delete-button p-2 bg-red-500 text-white rounded-lg shadow-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 transition duration-200";
+                deleteButton.dataset.subjectId = subjectNumber;
+                deleteButton.innerHTML = '<i class="fas fa-trash"></i>';
+                deleteButton.addEventListener('click', () => {
+                    if (container.children.length > 1) {
+                        div.remove();
+                        updateSubjectNumbers();
+                    } else {
+                        // Optional: Show a message if they try to delete the last subject
+                        const resultBox = document.getElementById('resultBox');
+                        const cgpaResult = document.getElementById('cgpaResult');
+                        cgpaResult.textContent = "কমপক্ষে একটি বিষয় থাকা আবশ্যক";
+                        resultBox.classList.remove('scale-y-0', 'opacity-0');
+                        resultBox.classList.add('scale-y-100', 'opacity-100');
+                        cgpaResult.style.color = "#DC2626";
+                    }
+                });
+
+                innerDiv.appendChild(label);
+                innerDiv.appendChild(select);
+                div.appendChild(innerDiv);
+                div.appendChild(deleteButton);
                 
                 return div;
             };
